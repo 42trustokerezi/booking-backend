@@ -1,29 +1,31 @@
 import express from "express";
+import bodyParser from "body-parser";
+import cors from "cors";
 import dotenv from "dotenv";
-import mongoose from "mongoose";
-import cookieParser from "cookie-parser";
-import cors from "cors"
+
+import connectDB from "./config/db.js";
+
+import bookingRoutes from "./routes/bookingRoutes.js";
+import apartmentRoutes from "./routes/apartmentRoutes.js";
 
 const app = express();
 dotenv.config();
 
-const connect = async () => {
-  try {
-    await mongoose.connect(process.env.MONGODB);
-    console.log("connected to mongodb.");
-  } catch (e) {
-    throw e;
-  }
-};
+app.use(bodyParser.json({ limit: "30mb", extended: true }));
+app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
+app.use(cors({ origin: "*" }));
 
-mongoose.connection.on("disconnected", ()=>{
-    console.log("mongoDB disconnected");
-})
+app.use("/shortlet", bookingRoutes);
+app.use("/shortlet", apartmentRoutes);
 
-app.use(cors());
-app.use(cookieParser());
+// middlewares for error handling
+app.use((req, res) =>
+  res.status(404).json({ message: "Route does not exists" })
+);
 
-app.listen(8080, () => {
-    connect();
-    console.log("backend server is live!")
-});
+// connect to mongodb
+connectDB();
+
+// Port
+const PORT = process.env.PORT;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
