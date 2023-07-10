@@ -14,7 +14,7 @@ const BookingSchema = new mongoose.Schema({
     required: true,
   },
   phoneNumber: {
-    type: Number,
+    type: String,
     required: true,
   },
   apartmentNumber: {
@@ -28,6 +28,7 @@ const BookingSchema = new mongoose.Schema({
   bookingStatus: {
     type: String,
     enum: ["pending", "approved", "rejected"],
+    default: "pending",
   },
 });
 

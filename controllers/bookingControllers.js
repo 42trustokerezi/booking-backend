@@ -2,10 +2,10 @@ import Booking from "../models/Booking.js";
 import Apartment from "../models/Apartment.js";
 
 export const bookShortlet = async (req, res) => {
-  const { id } = req.params;
+  const { apartmentId } = req.params;
   const { firstName, lastName, email, phoneNumber, noOfDays } = req.body;
 
-  const apartment = await Apartment.findById(id);
+  const apartment = await Apartment.findById(apartmentId);
   if (!apartment) {
     return res.status(404).json({ message: "Apartment not found" });
   }
@@ -35,48 +35,27 @@ export const bookShortlet = async (req, res) => {
 };
 
 export const confirmBooking = async (req, res) => {
-  const { apartmentId, bookingId } = req.params;
+  const { id } = req.params;
   const { status } = req.body;
 
-  const apartment = await Apartment.findById(apartmentId);
-  if (!apartment) {
-    return res.status(404).json({ message: "Apartment not found" });
-  }
-  const booking = await Booking.findById(bookingId);
+  const booking = await Booking.findById(id);
   if (!booking) {
     return res.status(404).json({ message: "Booking not found" });
   }
+  const apartment = await Apartment.findOne({
+    apartmentNumber: booking.apartmentNumber,
+  });
+  if (!apartment) {
+    return res.status(404).json({ message: "Apartment not found" });
+  }
   try {
     await Booking.updateOne(
-      { _id: bookingId },
+      { _id: id },
       { bookingStatus: status },
       { new: true }
     );
 
     res.status(200).json({ message: `You have ${status} this booking.` });
-  } catch (error) {
-    res.status(500).json({ message: "Something went wrong." });
-  }
-};
-
-export const availShortlet = async (req, res) => {
-  const { id } = req.params;
-
-  const apartment = await Apartment.findById(id);
-  if (!apartment) {
-    return res.status(404).json({ message: "Apartment not found" });
-  }
-
-  try {
-    await Apartment.updateOne(
-      { _id: apartment._id },
-      { isBooked: true },
-      { new: true }
-    );
-
-    res
-      .status(200)
-      .json({ message: "You made this shortlet available for booking." });
   } catch (error) {
     res.status(500).json({ message: "Something went wrong." });
   }

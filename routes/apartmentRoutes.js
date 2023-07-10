@@ -1,8 +1,18 @@
 import express from "express";
-import { uploadApartment } from "../controllers/apartmentControllers.js";
+import {
+  availShortlet,
+  removeApartment,
+  uploadApartment,
+} from "../controllers/apartmentControllers.js";
+
+// validators
+import { runValidation } from "../validators/index.js";
+import { apartmentValidator } from "../validators/apartmentValidator.js";
 
 const router = express.Router();
 
-router.post("/", uploadApartment);
+router.post("/", apartmentValidator, runValidation, uploadApartment);
+router.patch("/:id/avail-shortlet", availShortlet);
+router.delete("/:id/remove", removeApartment);
 
 export default router;
