@@ -16,6 +16,15 @@ export const uploadApartment = async (req, res) => {
   }
 };
 
+export const getApartments = async (req, res) => {
+  try {
+    const apartments = await Apartment.find();
+    res.status(200).json({ apartments });
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+};
+
 export const availShortlet = async (req, res) => {
   const { id } = req.params;
 

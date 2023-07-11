@@ -16,7 +16,7 @@ app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use(cors({ origin: "*" }));
 
 app.use("/booking", bookingRoutes);
-app.use("/shortlet", apartmentRoutes);
+app.use("/shortlets", apartmentRoutes);
 
 // middlewares for error handling
 app.use((req, res) =>
